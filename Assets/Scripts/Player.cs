@@ -47,6 +47,7 @@ public class Player : MonoBehaviour
     private bool isCoolDown;
     private Arrow currentArrow;
     private List<Arrow> arrowsPool;
+    private UiCharacterController controller;
 
 
     private void Awake()
@@ -83,55 +84,83 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
+        Move();
+
+        animator.SetFloat("Speed", Mathf.Abs(direction.x));
+
+    }
+
+    private void Jump1()
+    {
+        if (groundDetection.isGrounded)
+        {
+            RB.AddForce(Vector3.up * (jump + bonusForce), ForceMode2D.Impulse);
+            animator.SetTrigger("StartJump");
+            isJumping = true;
+        }
+    }
+
+    private void Update()
+    {
+#if UNITY_EDITOR
+        if (Input.GetKeyDown(KeyCode.Escape))
+            GameManager.Instance.OnPauseClick();
+        if (Input.GetKeyDown(KeyCode.Space))
+            Jump1();
+#endif
+    }
+
+    public void InitUiController(UiCharacterController uiController)
+    {
+        controller = uiController;
+        controller.Jump.onClick.AddListener(Jump1);
+        controller.Fire.onClick.AddListener(ChekShoot);
+    }
+
+    private void Move()
+    {
+
+
         // Проверка на ПРИЗЕМЛЕННОСТЬ
         animator.SetBool("IsGrounded", groundDetection.isGrounded);
         isJumping = isJumping && !groundDetection.isGrounded;
         direction = Vector3.zero;
+
+#if UNITY_EDITOR
+        if (Input.GetKey(KeyCode.A))
+            direction = Vector3.left;
+        if (Input.GetKey(KeyCode.D))
+            direction = Vector3.right;
+#endif
         if (!isJumping && !groundDetection.isGrounded)
         {
             animator.SetTrigger("StartFall");
         }
 
-
         // Управление игроком
-        if (Input.GetKey(KeyCode.A))
+        if (controller.Left.IsPressed)
         {
             direction = Vector3.left;
         }
-        if (Input.GetKey(KeyCode.D))
+        if (controller.Right.IsPressed)
         {
             direction = Vector3.right;
         }
         direction *= speed;
         direction.y = RB.velocity.y;
         RB.velocity = direction;
-        if (Input.GetKeyDown(KeyCode.Space) && (groundDetection.isGrounded))
-        {
-            RB.AddForce(Vector3.up * (jump + bonusForce), ForceMode2D.Impulse);
-            animator.SetTrigger("StartJump");
-            isJumping = true;
-        }
+       
 
         //Поворот спрайта по оси X
         if (direction.x > 0)
             Sprite.flipX = false;
         if (direction.x < 0)
             Sprite.flipX = true;
-        animator.SetFloat("Speed", Mathf.Abs(direction.x));
-
-        //Вызов выстрела
-        ChekShoot();
-
     }
-    private void Update()
-    {
-
-    }
-
 
     void ChekShoot()
     {   //При нажатии на ЛКМ, выстрел с силой shootForce 
-        if (Input.GetMouseButtonDown(0) &&(isCoolDown !=true)&& (groundDetection == true))
+        if (!isCoolDown)
         {
                 animator.SetBool("Aim", true);
         }

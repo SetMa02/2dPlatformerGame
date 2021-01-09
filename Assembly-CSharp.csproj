@@ -83,7 +83,9 @@
     <Compile Include="Assets\Scripts\PauseMenu.cs" />
     <Compile Include="Assets\Scripts\Player.cs" />
     <Compile Include="Assets\Scripts\PlayerInventory.cs" />
+    <Compile Include="Assets\Scripts\PressedButton.cs" />
     <Compile Include="Assets\Scripts\TriggerDamage.cs" />
+    <Compile Include="Assets\Scripts\UiCharacterController.cs" />
     <None Include="Assets\Resources\Sprites\Ninja Files\Read Me.txt" />
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>D:/Unity/Projects/CourseGame/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
