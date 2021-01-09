@@ -44,7 +44,7 @@ public class Player : MonoBehaviour
     public Health Health { get { return health; } } 
 
     public int coolDown;
-    private bool isCoolDown;
+    [HideInInspector] public bool isCoolDown;
     private Arrow currentArrow;
     private List<Arrow> arrowsPool;
     private UiCharacterController controller;
