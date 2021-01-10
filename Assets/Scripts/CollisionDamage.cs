@@ -33,7 +33,7 @@ public class CollisionDamage : MonoBehaviour
     public void SetDamage()
     {//Получение урона
         if(health != null)
-            health.TakeHit(damage);
+            health.TakeHit(damage, gameObject);
         health = null;
         direction = 0;
         animator.SetFloat("direction", 0f);

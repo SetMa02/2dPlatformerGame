@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -15,6 +16,9 @@ public class GameManager : MonoBehaviour
     public Dictionary<GameObject, ItemComponent> itemsContainer;
     public PlayerInventory inventory;
     public ItemBase itemDataBase;
+    [SerializeField] private Button pauseButton;
+    [SerializeField] private Button inventoryButton;
+    [SerializeField] private GameObject uiControl;
 
     private void Awake()
     {
@@ -30,11 +34,14 @@ public class GameManager : MonoBehaviour
         if (Time.timeScale > 0)
         {
             Time.timeScale = 0;
+            inventoryButton.enabled = false;
+            uiControl.SetActive(false);
         }
         else
         { 
-    
         Time.timeScale = 1;
+            inventoryButton.enabled = true;
+            uiControl.SetActive(true);
         }
     }
 
@@ -44,11 +51,15 @@ public class GameManager : MonoBehaviour
         {
             inventoryPanel.gameObject.SetActive(true);
             Time.timeScale = 0;
+            pauseButton.enabled = false;
+            uiControl.SetActive(false);
         }
         else
         {
             inventoryPanel.gameObject.SetActive(false);
             Time.timeScale = 1;
+            pauseButton.enabled = true;
+            uiControl.SetActive(true);
         }
     }
 

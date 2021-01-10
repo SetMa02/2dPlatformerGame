@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,6 +7,7 @@ using UnityEngine.UI;
 public class Health : MonoBehaviour
 {
     [SerializeField] private int health;
+    public Action<int, GameObject> OnTakeHit;
     public int CurrentHealth
     {
         get { return health; }
@@ -15,10 +17,12 @@ public class Health : MonoBehaviour
     {
         GameManager.Instance.healthContainer.Add(gameObject, this);
     }
-    public void TakeHit(int damage)
+    public void TakeHit(int damage, GameObject attacker)
     {//Получение дамага, если хелс = 0 то дестрой
         health -= damage;
-        Debug.Log(health);
+        if (OnTakeHit != null)
+            OnTakeHit(damage, attacker);
+
         if(health <= 0 ) 
             Destroy(gameObject);
     }

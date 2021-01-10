@@ -35,11 +35,15 @@ public class Player : MonoBehaviour
     [SerializeField] private Transform arrowSpawnPoint;
     [SerializeField] private float shootForce;
     [SerializeField] private int arrowsCount = 3;
-   [SerializeField] private Health health;
+    [SerializeField] private Health health;
     [SerializeField] private BuffReciver buffReciver;
+    [SerializeField] private float damageForce;
+    [SerializeField] private Camera playerCamera;
+   
     private float bonusForce;
     private float bonusHealth;
     private float bonusDamage;
+    private bool blockMovment;
 
     public Health Health { get { return health; } } 
 
@@ -67,7 +71,7 @@ public class Player : MonoBehaviour
             arrowsPool.Add(arrowTemp);
             arrowTemp.gameObject.SetActive(false);                                                                                                                                                                                                                                                                                          
         }
-
+        Health.OnTakeHit += TakeHit;
         buffReciver.OnBuffsChanged += ApplyBuffs;
     }
 
@@ -148,7 +152,8 @@ public class Player : MonoBehaviour
         }
         direction *= speed;
         direction.y = RB.velocity.y;
-        RB.velocity = direction;
+        if(!blockMovment)
+            RB.velocity = direction;
        
 
         //Поворот спрайта по оси X
@@ -166,14 +171,38 @@ public class Player : MonoBehaviour
         }
     }
 
+    /*
     private void OnCollisionStay2D(Collision2D col)
     {
         if(col.gameObject.CompareTag("Enemy"))
         {
             animator.SetBool("IsDamaged", true);
+            
         }
         else
             animator.SetBool("IsDamaged", false);
+    }
+    */
+
+    private void TakeHit(int damage, GameObject attacker)
+    {
+        animator.SetBool("GetDamage", true);
+        animator.SetTrigger("TakeHit");
+        blockMovment = true;
+        RB.AddForce(transform.position.x < attacker.transform.position.x ? 
+            new Vector2(-damageForce, 0) : new Vector2(damageForce, 0), ForceMode2D.Impulse);
+    }
+
+    public void UnblockMovement()
+    {
+        blockMovment = false;
+        animator.SetBool("GetDamage", false);
+    }
+
+    private void OnDestroy()
+    {
+        playerCamera.transform.parent = null;
+        playerCamera.enabled = true;
     }
 
     private void OnTriggerStay2D(Collider2D col)
